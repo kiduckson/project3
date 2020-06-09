@@ -1,0 +1,42 @@
+{% extends 'orders/layout.html' %} {% block title %} home {% endblock title %}
+
+
+{% block body %} 
+<h2>Menu</h2>
+
+<h4>Sub</h4>
+<label for="sub_size">size</label>
+<select class="form-control" id="sub_size" name="sub_size" onchange="sub_price()">	
+	<option value="S">Small</option>
+	<option value="L">Large</option>
+</select>
+
+<label for="sub_name">name</label>
+<select class="form-control" id="sub_name" name="sub_name" onchange="sub_price()">	
+	{% for s in sub %}
+	{% if s.size != 'L' %}
+	<option value="{{ s.name }}">{{s.name}}</option>
+	{% endif %}
+	{% endfor %}
+</select>
+
+
+<label for="sub_price">price</label>
+<div id="price"></div>
+
+
+<script type="text/javascript">
+	function sub_price() {
+		const size = document.querySelector("#sub_size").value;	
+		const name = document.querySelector("#sub_name").value;	
+		
+		{% for s in sub %}
+			if( size === "{{ s.size }}" && name === "{{ s.name }}"){
+			document.querySelector("#price").innerText = Number.parseFloat({{s.price}}).toFixed(2);
+			}
+		{% endfor %}
+	}
+</script>
+
+{% endblock body %}
+

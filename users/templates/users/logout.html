@@ -1,0 +1,12 @@
+{% extends 'orders/layout.html' %}
+
+{% block title %} login {% endblock title %}
+{% block body %}
+
+<h2>Logged out successfully</h2>
+
+<hr/>
+<small class="text-muted">
+    Sign in again ?<a class="ml-2" href="{% url 'login' %}">Sign In</a>
+</small>
+{% endblock body %}
