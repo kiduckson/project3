@@ -1,0 +1,213 @@
+{% extends 'orders/layout.html' %} {% block title %} home {% endblock title %}
+
+{% block body %} 
+
+	<div class=row>
+		<div class="col-12 m-3">{% include "orders/m_nav.html" %}</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6 col-sm-12">
+		<h2>Regular Pizza</h2>
+		<table class="table">
+			<thead>
+				<tr>
+				<th scope="col"></th>
+				<th scope="col">Small</th>
+				<th scope="col">Large</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+				<td>Cheese</td>
+				<td>$12.70</td>
+				<td>$17.95</td>
+				</tr>
+				<tr>
+				<td>1 topping</td>
+				<td>$13.70</td>
+				<td>$19.95</td>
+				</tr>
+				<tr>
+				<td>2 topping</td>
+				<td>$15.20</td>
+				<td>$21.95</td>
+				</tr>
+				<tr>
+				<td>3 topping</td>
+				<td>$16.20</td>
+				<td>$23.95</td>
+				</tr>	
+				<tr>
+				<td>Special (5 toppings)</td>
+				<td>$17.75</td>
+				<td>$25.95</td>
+				</tr>
+			</tbody>
+		</table>
+		</div>
+
+		<div class="col-md-6 col-sm-12">
+		<h2>Sicilian Pizza</h2>
+		<table class="table">
+			<thead>
+				<tr>
+				<th scope="col"></th>
+				<th scope="col">Small</th>
+				<th scope="col">Large</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+				<td>Cheese</td>
+				<td>$24.45</td>
+				<td>$38.70</td>
+				</tr>
+				<tr>
+				<td>1 topping</td>
+				<td>$26.45</td>
+				<td>$40.70</td>
+				</tr>
+				<tr>
+				<td>2 topping</td>
+				<td>$28.45</td>
+				<td>$42.70</td>
+				</tr>
+				<tr>
+				<td>3 topping</td>
+				<td>$29.45</td>
+				<td>$44.70</td>
+				</tr>	
+				<tr>
+				<td>Special (5 toppings)</td>
+				<td>$30.45</td>
+				<td>$45.70</td>
+				</tr>
+			</tbody>
+		</table>
+		</div>
+	</div>
+
+
+	<div class="row">
+		<div class="col-sm">
+			<form method="post" action="{% url 'additem' %}">
+
+			{% csrf_token %}
+			
+			<h4>Pizza</h4>
+
+			<label class="mt-2" for="pizza_size">size</label>
+
+			<select class="form-control" id="pizza_size" name="pizza_size" onchange="pizza_price_render()" required>	
+				<option value="S">Small</option>
+				<option value="L">Large</option>
+			</select>
+
+			<label class="mt-2" for="pizza_style">name</label>
+			<select class="form-control" id="pizza_style" name="pizza_style" onchange="pizza_price_render()" required>	
+				{% for p in pizza %}
+					{% if p.size != 'L' %}
+						<option value="{{ p.style }}">{{ p.style}}</option>
+					{% endif %}
+				{% endfor %}
+			</select>
+
+			<label class="mt-2">Toppings</label>
+			<div id="topping_box">	
+				{% for t in topping %}		
+					<div class="form-check form-check-inline">
+						<input 
+						class="topping form-check-input" 
+						type="checkbox" 
+						onclick="add_t()"
+						name="topping" 
+						id="{{ t.name }}"
+						value="{{ t.name }}" 						
+						>
+						<label class="form-check-label" for="{{ t.name }}">{{t.name}}</label>
+					</div>					
+				{% endfor %}
+				<small id="extraHelp" class="form-text text-muted">Maximum 5 toppings</small>
+			</div>
+
+			<h4 class="mt-3" for="pizza_price">price</h4>
+			<h4 id="pizza_price" name="pizza_price"></h4>
+
+			<input id="pizza_price_hidden" name="pizza_price_hidden" type="text" style="display:none"/>
+
+			<button type="submit" id="pizza_button" class="btn btn-primary mt-3" disabled>Add to your cart</button>
+			</form>
+		</div>		
+	</div>
+</div>
+
+<script type="text/javascript">
+	function pizza_price_render() {
+		const size = document.querySelector("#pizza_size").value;	
+		const style = document.querySelector("#pizza_style").value;	
+		document.querySelectorAll(".topping").forEach(el =>{
+			el.checked = false
+		})
+		document.querySelector("#pizza_button").removeAttribute("disabled")
+
+		{% for p in pizza %}
+			if( size === "{{ p.size }}" && style === "{{ p.style }}"){
+				const ans = Number.parseFloat({{p.price}})
+				document.querySelector("#pizza_price").innerText = ans.toFixed(2);
+				document.querySelector("#pizza_price_hidden").value = ans;
+			}
+		{% endfor %}
+	} 
+ 
+	function add_t() {
+		document.querySelector("#pizza_button").removeAttribute("disabled")
+		const size = document.querySelector("#pizza_size").value;	
+		const style = document.querySelector("#pizza_style").value;	
+		let base_price = 0;
+		let t_price = 0;
+
+		{% for p in pizza %}
+			if( size === "{{ p.size }}" && style === "{{ p.style }}"){
+				base_price = Number.parseFloat({{p.price}})
+			}
+		{% endfor %}
+
+		const selected = document.querySelectorAll(".topping:checked").length
+
+		if(selected === 0 && style === "Regular" && size === "S") t_price = 12.70
+		if(selected === 1 && style === "Regular" && size === "S") t_price = 13.70
+		if(selected === 2 && style === "Regular" && size === "S") t_price = 15.20
+		if(selected === 3 && style === "Regular" && size === "S") t_price = 16.20
+		if(selected >= 4 && style === "Regular" && size === "S") t_price = 17.75
+
+		if(selected === 0 && style === "Regular" && size === "L") t_price = 17.95
+		if(selected === 1 && style === "Regular" && size === "L") t_price = 19.95
+		if(selected === 2 && style === "Regular" && size === "L") t_price = 21.95
+		if(selected === 3 && style === "Regular" && size === "L") t_price = 23.95
+		if(selected >= 4 && style === "Regular" && size === "L") t_price = 25.95
+
+		if(selected === 0 && style === "Sicilian" && size === "S") t_price = 24.45
+		if(selected === 1 && style === "Sicilian" && size === "S") t_price = 26.45
+		if(selected === 2 && style === "Sicilian" && size === "S") t_price = 28.45
+		if(selected === 3 && style === "Sicilian" && size === "S") t_price = 29.45
+		if(selected >= 4 && style === "Sicilian" && size === "S") t_price = 30.45
+
+		if(selected === 0 && style === "Sicilian" && size === "L") t_price = 38.70
+		if(selected === 1 && style === "Sicilian" && size === "L") t_price = 40.70
+		if(selected === 2 && style === "Sicilian" && size === "L") t_price = 42.70
+		if(selected === 3 && style === "Sicilian" && size === "L") t_price = 44.70
+		if(selected >= 4 && style === "Sicilian" && size === "L") t_price = 45.70
+		
+		document.querySelector("#pizza_price").innerText = t_price.toFixed(2)
+		document.querySelector("#pizza_price_hidden").value = t_price
+	}
+
+	$("input.topping").click(function() {
+	var bol = $("input.topping:checked").length >= 5;     
+	$("input.topping").not(":checked").attr("disabled",bol);
+	});
+
+</script>
+
+{% endblock body %}
+

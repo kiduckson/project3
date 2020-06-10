@@ -26,6 +26,8 @@
       integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
+
     <title>Project 3: {% block title %}{% endblock %}</title>
   </head>
 
@@ -54,15 +56,19 @@
         {% if user.is_authenticated %}
         <ul class="navbar-nav ml-auto">
           <button type="button" class="btn btn-light">
-            <a href="#">
+            <a href="{% url 'cart' %}">
               Cart
             </a>
-            <span id="cart_badge" data-items="0" class="badge badge-dark">
-              0
+            <span
+              id="cart_badge"
+              data-items="{{ request.session.cart_num }}"
+              class="badge badge-dark"
+            >
+              {{ request.session.cart_num }}
             </span>
           </button>
           <li class="nav-item">
-            <a class="nav-link" href="#">{{ user.username }}</a>
+            <a class="nav-link" href="{% url 'cart'%}">{{ user.username }}</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'logout'%}">Logout</a>
@@ -85,7 +91,7 @@
       {{ message }}
     </div>
     {% endif %}
-    <main class="container p-3">
+    <main class="container p-3">   
       {% block body %}{% endblock %}
     </main>
   </body>

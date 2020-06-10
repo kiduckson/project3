@@ -1,0 +1,73 @@
+{% extends 'orders/layout.html' %} {% block title %} home {% endblock title %}
+
+{% block body %} 
+
+	<div class=row>
+		<div class="col-12 m-3">{% include "orders/m_nav.html" %}</div>
+	</div>
+
+	<div class="row">
+		<div class="col-sm">
+			<form method="post" action="{% url 'additem' %}">
+			{% csrf_token %}
+			<h4>Salad</h4>
+			<label class="mt-2" for="sd_name">Salad</label>
+			<select class="form-control" id="sd_name" name="sd_name" onchange="sd_price_render()" required>	
+				{% for sd in salad %}	
+						<option value="{{ sd.name }}">{{ sd.name }}</option>
+				{% endfor %}
+			</select>
+			<h4 class="mt-3" for="sd_price">price</h4>
+			<h4 id="sd_price" name="sd_price"></h4>
+			<input id="sd_price_hidden" name="sd_price_hidden" type="text" style="display:none"/>
+			<button type="submit" id="sd_button" class="btn btn-primary mt-3" disabled>Add to your cart</button>
+			</form>
+		</div>		
+
+		<div class="col-sm">
+			<form method="post" action="{% url 'additem' %}">
+			{% csrf_token %}
+			<h4>Pasta</h4>
+			<label class="mt-2" for="pa_name">Pasta</label>
+			<select class="form-control" id="pa_name" name="pa_name" onchange="pa_price_render()" required>	
+				{% for pa in pasta %}	
+						<option value="{{ pa.name }}">{{ pa.name }}</option>
+				{% endfor %}
+			</select>
+			<h4 class="mt-3" for="pa_price">price</h4>
+			<h4 id="pa_price" name="pa_price"></h4>
+			<input id="pa_price_hidden" name="pa_price_hidden" type="text" style="display:none"/>
+			<button type="submit" id="pa_button" class="btn btn-primary mt-3" disabled>Add to your cart</button>
+			</form>
+		</div>			
+
+	</div>
+</div>
+
+<script type="text/javascript">
+	function sd_price_render() {	
+			document.querySelector("#sd_button").removeAttribute("disabled")
+		const name = document.querySelector("#sd_name").value;	
+		{% for sd in salad %}	
+			if( name === "{{ sd.name }}"){
+				const ans = Number.parseFloat({{sd.price}}).toFixed(2)
+				document.querySelector("#sd_price").innerText = ans;
+				document.querySelector("#sd_price_hidden").value = ans;
+			}
+		{% endfor %}
+	}
+	function pa_price_render() {	
+		document.querySelector("#pa_button").removeAttribute("disabled")
+		const name = document.querySelector("#pa_name").value;	
+		{% for pa in pasta %}	
+			if( name === "{{ pa.name }}"){
+				const ans = Number.parseFloat({{pa.price}}).toFixed(2)
+				document.querySelector("#pa_price").innerText = ans;
+				document.querySelector("#pa_price_hidden").value = ans;
+			}
+		{% endfor %}
+	}
+</script>
+
+{% endblock body %}
+

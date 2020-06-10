@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light border">
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#m_navDropdown"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="m_navDropdown">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'pizza' %}">Pizza</a>
+      </li>
+    </ul>
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'sub' %}">Sub</a>
+      </li>
+    </ul>
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'dinnerplatter' %}">Dinner Plate</a>
+      </li>
+    </ul>
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'others' %}">Others</a>
+      </li>
+    </ul>
+  </div>
+</nav>
