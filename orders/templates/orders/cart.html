@@ -4,16 +4,64 @@
 
 {% block body %} 
 
-{% for item in items %}
+<h2>Carts</h2>
+
+<form method="post" action="{% url 'orderitem' %}">
+	{% csrf_token %}
+	{% for item in items %}
 
 	<div class="card m-2">
-	<h5 class="card-header">{{ item.order }} : ${{item.price}}</h5>
+		<ul class="list-group list-group-flush">
+		<li class="list-group-item">			
+			<div class="form-check">
+				<input 
+				class="orders form-check-input" 
+				type="checkbox" 
+				name="orders" 	
+				onclick="order_select()"		
+				id="{{ item.order }}"
+				data-price="{{item.price}}"
+				value="{{ item.order }}" 						
+				>
+				<label class="form-check-label" for="{{ item.order }}">{{ item.order }} : ${{item.price}}</label>
+			</div>					
+		</li>
+		</ul>
 	</div>
-
-{% empty %}
+	{% empty %}
 	<div class="card m-2">
 	<h5 class="card-header">Nothing yet</h5>
 	</div>
-{% endfor %}
+	{% endfor %}	
+	
+	<hr/>
+
+	<div>
+		<h4 for="order_total_price">Total Price</h4>
+		<h4><div id="order_total_price"></div></h4>
+		<input id="order_total_price_hidden" name="order_total_price_hidden" type="text" style="display:none"/>
+	</div>
+	<button type="submit" id="order_button" class="btn btn-primary mt-3" disabled>Order</button>
+</form>
+
+<script>
+	function order_select() {	
+		let totalPrice = 0;	
+		const orders = document.querySelectorAll(".orders")	
+		orders.forEach(order => {
+			if(order.checked === true){
+				totalPrice+= Number.parseFloat(order.dataset.price)
+			}
+		})
+		document.querySelector("#order_total_price_hidden").value = totalPrice
+		document.querySelector("#order_total_price").innerText = totalPrice.toFixed(2)
+	}
+
+	$(".orders").click(function() {
+	var bol = $("input.orders:checked").length === 0; 
+	$("#order_button").attr("disabled", bol);
+	});
+</script>
+
 
 {% endblock body %}

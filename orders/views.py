@@ -84,3 +84,15 @@ def additem(request):
     entry.save()
 
     return HttpResponseRedirect(reverse("cart"))
+
+
+@login_required
+def orderitem(request):
+    user = request.user
+    total = request.POST.getlist("order_total_price_hidden")
+    orders = request.POST.getlist("orders")
+    # print(request.POST)
+    print(orders)
+    print(total)
+
+    return HttpResponseRedirect(reverse("cart"))
