@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import aggregates
+from django.db.models import Sum
 
 # Create your models here.
 
@@ -79,9 +79,17 @@ class UserCart(models.Model):
         return f"{self.user}:  Order Item: {self.order}  Price : {self.price}"
 
 
+class OrderItem(models.Model):
+    item = models.CharField(max_length=50)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return f"Item: {self.item}. Price:{self.price}"
+
+
 class UserOrder(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    order = models.ForeignKey(UserCart, on_delete=models.CASCADE)
+    order = models.ManyToManyField(OrderItem, blank=True)
     price = models.DecimalField(max_digits=5, decimal_places=2)
     orderedTime = models.DateTimeField(auto_now=False, auto_now_add=True)
 

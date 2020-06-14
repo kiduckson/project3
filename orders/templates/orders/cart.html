@@ -36,12 +36,14 @@
 	
 	<hr/>
 
+	{% if items %}
 	<div>
 		<h4 for="order_total_price">Total Price</h4>
 		<h4><div id="order_total_price"></div></h4>
 		<input id="order_total_price_hidden" name="order_total_price_hidden" type="text" style="display:none"/>
 	</div>
 	<button type="submit" id="order_button" class="btn btn-primary mt-3" disabled>Order</button>
+	{% endif %}
 </form>
 
 <script>

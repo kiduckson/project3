@@ -1,0 +1,24 @@
+{% extends 'orders/layout.html' %} 
+
+{% block title %} orders {% endblock title %}
+
+{% block body %}
+
+<h2>Orders</h2>
+
+{% for o in orders %}
+	<div class="card m-2">
+<h5 class="card-header"> {{o}}</h5>
+</div>
+
+
+{% empty %}
+<div class="card m-2">
+<h5 class="card-header">Nothing yet</h5>
+</div>
+{% endfor %}
+
+
+
+
+{% endblock body %}

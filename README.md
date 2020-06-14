@@ -5,6 +5,6 @@ Web Programming with Python and JavaScript
 * [x] adding item
 * [x] registration login logout
 * [x] shoppin cart
-* [] placing order
-* [] viewing order
-* [] personal touch = stripe
+* [x] placing order
+* [x] viewing order
+* [x] personal touch = stripe

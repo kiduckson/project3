@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
 
-from .models import Pizza, Topping, Sub, Extra, Pasta, Salad, DinnerPlatter, UserCart
+from .models import Pizza, Topping, Sub, Extra, Pasta, Salad, DinnerPlatter, UserCart, UserOrder, OrderItem
 
 # Create your views here.
 
@@ -14,6 +14,8 @@ def index(request):
         user = request.user
         request.session['cart_num'] = len(
             UserCart.objects.all().filter(user=user))
+        request.session['orders_num'] = len(
+            UserOrder.objects.all().filter(user=user))
         return render(request, "orders/index.html")
     return render(request, "orders/index.html")
 
@@ -58,10 +60,21 @@ def cart(request):
     user = request.user
     request.session['cart_num'] = len(
         UserCart.objects.all().filter(user=user))
+    request.session['orders_num'] = len(
+        UserOrder.objects.all().filter(user=user))
     context = {
         "items": UserCart.objects.all().filter(user=user)
     }
     return render(request, 'orders/cart.html', context)
+
+
+@login_required
+def orders(request):
+    user = request.user
+    context = {
+        'orders': UserOrder.objects.all().filter(user=user)
+    }
+    return render(request, "orders/orders.html", context)
 
 
 @login_required
@@ -89,10 +102,15 @@ def additem(request):
 @login_required
 def orderitem(request):
     user = request.user
-    total = request.POST.getlist("order_total_price_hidden")
-    orders = request.POST.getlist("orders")
-    # print(request.POST)
-    print(orders)
-    print(total)
+    total = request.POST.get("order_total_price_hidden")
+    entry = UserOrder(user=user, price=total)
+    entry.save()
 
-    return HttpResponseRedirect(reverse("cart"))
+    orders = request.POST.getlist("orders")
+    for order in orders:
+        o = UserCart.objects.get(order=order)
+        oi = OrderItem.objects.create(item=o.order, price=o.price)
+        entry.order.add(oi)
+        o.delete()
+
+    return render(request, "orders/index.html", {"message": "Thank you for the order"})

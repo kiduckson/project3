@@ -67,9 +67,18 @@
               {{ request.session.cart_num }}
             </span>
           </button>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'cart'%}">{{ user.username }}</a>
-          </li>
+          <button type="button" class="btn btn-light">
+            <a href="{% url 'orders' %}">
+              Orders
+            </a>
+            <span
+              id="cart_badge"
+              data-items="{{ request.session.orders_num }}"
+              class="badge badge-dark"
+            >
+              {{ request.session.orders_num }}
+            </span>
+          </button>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'logout'%}">Logout</a>
           </li>
@@ -91,7 +100,7 @@
       {{ message }}
     </div>
     {% endif %}
-    <main class="container p-3">   
+    <main class="container p-3">
       {% block body %}{% endblock %}
     </main>
   </body>
